@@ -8,7 +8,7 @@ A simple log watcher that sends matched lines to Discord via webhook.
 
 ```bash
 docker run -d \
-  -e LOG_SOURCE="docker:terraria" \
+  -e LOG_SOURCE="docker:myapp" \
   -e PATTERNS='["has joined", "has left"]' \
   -e DISCORD_WEBHOOK="https://discord.com/api/webhooks/xxx/yyy" \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
@@ -85,48 +85,28 @@ MESSAGE_TEMPLATE="🎮 {player} joined the server"
 
 ## Examples
 
-### Terraria Server
+### Game Server
 
 ```yaml
 version: "3.8"
 
 services:
-  terraria:
-    image: ryshe/terraria:latest
-    container_name: terraria
+  gameserver:
+    image: your-game-server:latest
+    container_name: gameserver
     ports:
       - "7777:7777"
 
   log-watcher:
     image: simple-logs-to-discord
     environment:
-      - LOG_SOURCE=docker:terraria
+      - LOG_SOURCE=docker:gameserver
       - PATTERNS=["(?P<player>.+) has joined\\.", "(?P<player>.+) has left\\."]
       - DISCORD_WEBHOOK=${DISCORD_WEBHOOK}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
-      - terraria
-```
-
-### Minecraft Server
-
-```yaml
-version: "3.8"
-
-services:
-  minecraft:
-    image: itzg/minecraft-server
-    container_name: minecraft
-
-  log-watcher:
-    image: simple-logs-to-discord
-    environment:
-      - LOG_SOURCE=docker:minecraft
-      - PATTERNS=["joined the game", "left the game"]
-      - DISCORD_WEBHOOK=${DISCORD_WEBHOOK}
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - gameserver
 ```
 
 ### Application Error Monitoring
