@@ -1,6 +1,7 @@
 """Discord Webhook 通知"""
 
 import sys
+
 import requests
 
 
